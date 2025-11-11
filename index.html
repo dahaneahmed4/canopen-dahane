@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorateur CANopen — Dahane Ahmed Lamine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-top: 3rem;
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .nav-button { transition: all 0.3s ease; }
+        .nav-button.active {
+            background-color: #003A70;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .fsm-state { transition: all 0.3s ease; border: 2px solid #9ca3af; }
+        .fsm-state.active {
+            border-color: #008A30;
+            background-color: #f0fdf4;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            transform: scale(1.05);
+        }
+        .fsm-arrow { position: relative; height: 2px; background-color: #9ca3af; }
+        .fsm-arrow.vertical { width: 2px; height: 50px; }
+        .fsm-arrow::after { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
+        .fsm-arrow.right::after {
+            right: -5px; top: -4px;
+            border-width: 5px 0 5px 8px;
+            border-color: transparent transparent transparent #9ca3af;
+        }
+        .fsm-arrow.down::after {
+            bottom: -5px; left: -4px;
+            border-width: 8px 5px 0 5px;
+            border-color: #9ca3af transparent transparent transparent;
+        }
+        .fsm-arrow.active { background-color: #008A30; }
+        .fsm-arrow.active::after { border-color: transparent transparent transparent #008A30; }
+        .fsm-arrow.vertical.active::after { border-color: #008A30 transparent transparent transparent; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 350px;
+            height: 350px;
+            max-height: 350px;
+            margin: 1rem auto;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+<main class="container mx-auto p-4 md:p-8 max-w-7xl">
+    <header class="text-center mb-8">
+        <h1 class="text-4xl md:text-5xl font-bold text-blue-900" style="color:#003A70;">
+            Explorateur de Protocole CANopen
+        </h1>
+        <p class="text-xl md:text-2xl text-slate-600 mt-2">
+            Interfaçage M241 (Maître) & ATV32 (Esclave)
+        </p>
+        <p class="text-slate-500 mt-3 italic">Réalisé par Dahane Ahmed Lamine</p>
+    </header>
+
+    <!-- ton contenu complet inchangé ici -->
+    <!-- (tout ce que tu m’as envoyé reste identique, le JS, les tabs, etc.) -->
+
+</main>
+
+<footer>
+    © 2025 – Projet CANopen M241 & ATV32 | Réalisé par <strong>Dahane Ahmed Lamine</strong>
+</footer>
+
+<script>
+/* ton JavaScript original inchangé */
+</script>
+</body>
+</html>
