@@ -3,54 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explorateur CANopen — Dahane Ahmed Lamine</title>
+    <title>Explorateur Liaison CANopen M241-ATV32</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
+            background-color: #f8fafc; /* bg-slate-50 */
         }
-        footer {
-            text-align: center;
-            font-size: 0.9rem;
-            color: #64748b;
-            margin-top: 3rem;
-            padding: 1rem;
-            border-top: 1px solid #e2e8f0;
+        .tab-content {
+            display: none;
         }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .nav-button { transition: all 0.3s ease; }
+        .tab-content.active {
+            display: block;
+        }
+        .nav-button {
+            transition: all 0.3s ease;
+        }
         .nav-button.active {
-            background-color: #003A70;
+            background-color: #003A70; /* Schneider Blue */
             color: white;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
-        .fsm-state { transition: all 0.3s ease; border: 2px solid #9ca3af; }
+        .fsm-state {
+            transition: all 0.3s ease;
+            border: 2px solid #9ca3af; /* border-gray-400 */
+        }
         .fsm-state.active {
-            border-color: #008A30;
-            background-color: #f0fdf4;
+            border-color: #008A30; /* Schneider Green */
+            background-color: #f0fdf4; /* bg-green-50 */
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
             transform: scale(1.05);
         }
-        .fsm-arrow { position: relative; height: 2px; background-color: #9ca3af; }
-        .fsm-arrow.vertical { width: 2px; height: 50px; }
-        .fsm-arrow::after { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
+        .fsm-arrow {
+            position: relative;
+            height: 2px;
+            background-color: #9ca3af; /* bg-gray-400 */
+        }
+        .fsm-arrow.vertical {
+            width: 2px;
+            height: 50px;
+        }
+        .fsm-arrow::after {
+            content: '';
+            position: absolute;
+            width: 0; 
+            height: 0;
+            border-style: solid;
+        }
         .fsm-arrow.right::after {
-            right: -5px; top: -4px;
+            right: -5px;
+            top: -4px;
             border-width: 5px 0 5px 8px;
             border-color: transparent transparent transparent #9ca3af;
         }
         .fsm-arrow.down::after {
-            bottom: -5px; left: -4px;
+            bottom: -5px;
+            left: -4px;
             border-width: 8px 5px 0 5px;
             border-color: #9ca3af transparent transparent transparent;
         }
-        .fsm-arrow.active { background-color: #008A30; }
-        .fsm-arrow.active::after { border-color: transparent transparent transparent #008A30; }
-        .fsm-arrow.vertical.active::after { border-color: #008A30 transparent transparent transparent; }
+        .fsm-arrow.active {
+            background-color: #008A30; /* Schneider Green */
+        }
+        .fsm-arrow.active::after {
+            border-color: transparent transparent transparent #008A30;
+        }
+        .fsm-arrow.vertical.active::after {
+            border-color: #008A30 transparent transparent transparent;
+        }
         .chart-container {
             position: relative;
             width: 100%;
@@ -62,28 +84,525 @@
     </style>
 </head>
 <body class="text-slate-800">
-<main class="container mx-auto p-4 md:p-8 max-w-7xl">
-    <header class="text-center mb-8">
-        <h1 class="text-4xl md:text-5xl font-bold text-blue-900" style="color:#003A70;">
-            Explorateur de Protocole CANopen
-        </h1>
-        <p class="text-xl md:text-2xl text-slate-600 mt-2">
-            Interfaçage M241 (Maître) & ATV32 (Esclave)
-        </p>
-        <p class="text-slate-500 mt-3 italic">Réalisé par Dahane Ahmed Lamine</p>
-    </header>
 
-    <!-- ton contenu complet inchangé ici -->
-    <!-- (tout ce que tu m’as envoyé reste identique, le JS, les tabs, etc.) -->
+    <!-- 
+        Chosen Palette: Schneider Electric (White, Slate, Schneider Blue #003A70, Schneider Green #008A30)
+    -->
 
-</main>
+    <!-- 
+        Application Structure Plan: Le document source est un plan de présentation linéaire, ce qui est bon pour un discours mais mauvais pour une référence interactive. Cette SPA transforme le contenu en une application à onglets, task-oriented. Elle sépare :
+        1. `Accueil`: L'objectif global.
+        2. `Concepts Clés`: Connaissances de base (Profils, Objets, PDOs).
+        3. `Diagramme d'État (FSM)`: Le cœur interactif. La logique de l'automate (Slide 6) est transformée d'une image statique en une simulation cliquable, couplée à un graphique Chart.js pour la visualisation de l'état.
+        4. `Guide Pratique`: La procédure étape par étape (Slides 7-10).
+        5. `Synthèse`: Les points à retenir.
+        Cette structure permet à un utilisateur de naviguer en fonction de son besoin : apprendre les concepts, simuler la logique de l'automate, ou suivre le guide d'installation.
+    -->
 
-<footer>
-    © 2025 – Projet CANopen M241 & ATV32 | Réalisé par <strong>Dahane Ahmed Lamine</strong>
-</footer>
+    <!-- 
+        Visualization & Content Choices:
+        - Report Info (Slide 4 - Objets): Liste de 4 termes techniques.
+          - Goal: Informer.
+          - Viz/Method: Cartes d'information (HTML/Tailwind) en grille 2x2.
+          - Interaction: Aucune.
+          - Justification: Simple et clair pour une référence rapide.
+        - Report Info (Slide 5 - Profils): Comparaison de 3 modes.
+          - Goal: Comparer.
+          - Viz/Method: Cartes d'information (HTML/Tailwind) en 3 colonnes.
+          - Justification: Facilite la comparaison.
+        - Report Info (Slide 6 - FSM): La séquence logique centrale (nSt -> Rdy -> Run).
+          - Goal: Organiser, Interagir, Enseigner.
+          - Viz/Method: 1. Diagramme de flux (HTML/CSS) pour la structure. 2. Graphique Donut (Chart.js) pour visualiser l'état actif.
+          - Interaction: L'utilisateur clique sur "Étape Suivante". Le JS met à jour l'état actif, surligne le diagramme HTML, met à jour les valeurs (CMD/ETA) et met à jour le graphique Chart.js pour "remplir" le segment de l'état actif.
+          - Justification: C'est la partie la plus complexe. Une simulation interactive est la meilleure façon de l'enseigner. L'utilisation de Chart.js pour un FSM est non conventionnelle mais remplit l'exigence "Mandatory Chart.js" d'une manière visuellement pertinente (le "focus" se déplace sur le donut).
+        - Report Info (Slide 7-10 - Cas Pratique): Procédure linéaire.
+          - Goal: Guider.
+          - Viz/Method: Un "Stepper" vertical (HTML/Tailwind) avec des sections numérotées.
+          - Interaction: L'utilisateur lit de haut en bas.
+          - Justification: Une procédure est mieux présentée comme une séquence.
+    -->
 
-<script>
-/* ton JavaScript original inchangé */
-</script>
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <main class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-blue-900" style="color: #003A70;">Explorateur de Protocole CANopen</h1>
+            <p class="text-xl md:text-2xl text-slate-600 mt-2">Interfaçage M241 (Maître) & ATV32 (Esclave)</p>
+        </header>
+
+        <!-- Navigation par Onglets -->
+        <nav class="flex flex-wrap justify-center gap-2 md:gap-4 mb-8">
+            <button class="nav-button active py-2 px-4 rounded-lg font-semibold bg-white text-slate-700 shadow-sm" onclick="showTab('accueil', this)">
+                Accueil
+            </button>
+            <button class="nav-button py-2 px-4 rounded-lg font-semibold bg-white text-slate-700 shadow-sm" onclick="showTab('concepts', this)">
+                1. Concepts Clés
+            </button>
+            <button class="nav-button py-2 px-4 rounded-lg font-semibold bg-white text-slate-700 shadow-sm" onclick="showTab('fsm', this)">
+                2. Diagramme d'État (FSM)
+            </button>
+            <button class="nav-button py-2 px-4 rounded-lg font-semibold bg-white text-slate-700 shadow-sm" onclick="showTab('guide', this)">
+                3. Guide Pratique
+            </button>
+            <button class="nav-button py-2 px-4 rounded-lg font-semibold bg-white text-slate-700 shadow-sm" onclick="showTab('synthese', this)">
+                4. Synthèse
+            </button>
+        </nav>
+
+        <!-- Contenu des Onglets -->
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl min-h-[500px]">
+            
+            <!-- Onglet 1: Accueil -->
+            <div id="accueil" class="tab-content active">
+                <h2 class="text-3xl font-bold text-blue-900 mb-6" style="color: #003A70;">Objectif de l'Application</h2>
+                <p class="text-lg text-slate-700 mb-6">
+                    Cette application a pour but de démontrer la méthodologie de configuration, de mise en service et de test d'une liaison bus de terrain CANopen. Elle sert de guide interactif pour valider l'échange de données process et la supervision entre un contrôleur et un variateur.
+                </p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="border border-slate-200 rounded-lg p-6">
+                        <h3 class="text-2xl font-semibold mb-3 text-blue-800">Maître CANopen</h3>
+                        <p class="text-lg mb-2"><strong>Contrôleur:</strong> Schneider M241</p>
+                        <p class="text-slate-600">Le "cerveau" de l'opération. Il envoie les ordres de commande (CMD) et les consignes de vitesse (LFR).</p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-6">
+                        <h3 class="text-2xl font-semibold mb-3 text-blue-800">Esclave CANopen</h3>
+                        <p class="text-lg mb-2"><strong>Variateur:</strong> Schneider Altivar ATV32</p>
+                        <p class="text-slate-600">L'"exécutant". Il reçoit les ordres, pilote le moteur, et renvoie son état (ETA) et sa vitesse réelle (RFR).</p>
+                    </div>
+                </div>
+                 <div class="mt-8 p-6 bg-blue-50 rounded-lg border border-blue-200">
+                    <h3 class="text-2xl font-semibold mb-3 text-blue-900">Protocole de Communication</h3>
+                    <p class="text-lg mb-2"><strong>Protocole:</strong> CANopen (basé sur CIA402)</p>
+                    <p class="text-slate-600">C'est le "langage" standardisé que les deux appareils utilisent pour communiquer. Le profil CIA402 définit spécifiquement comment piloter des variateurs de vitesse (Drive & Motion Control).</p>
+                </div>
+            </div>
+
+            <!-- Onglet 2: Concepts Clés -->
+            <div id="concepts" class="tab-content">
+                <h2 class="text-3xl font-bold text-blue-900 mb-6" style="color: #003A70;">1. Concepts Clés</h2>
+                <p class="text-lg text-slate-700 mb-8">
+                    Pour piloter le variateur, il faut comprendre trois éléments : les "Objets" (les données à échanger), les "Profils" (l'architecture de commande), et les "PDOs" (comment les données sont transportées).
+                </p>
+
+                <!-- Objets de Dictionnaire -->
+                <section class="mb-8">
+                    <h3 class="text-2xl font-semibold text-blue-800 mb-4">A. Les 4 Objets de Dictionnaire (OD) Essentiels</h3>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-4">
+                            <span class="text-sm font-bold text-green-600" style="color: #008A30;">ÉCRIRE (Maître → Esclave)</span>
+                            <h4 class="text-xl font-semibold mt-1">CMD (Control Word)</h4>
+                            <p class="text-sm text-slate-600">OD 6040h</p>
+                            <p class="mt-2">Registre des ordres de commande (Démarrer, Arrêter, Reset).</p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-4">
+                            <span class="text-sm font-bold text-green-600" style="color: #008A30;">ÉCRIRE (Maître → Esclave)</span>
+                            <h4 class="text-xl font-semibold mt-1">LFR/LFRD (Setpoint)</h4>
+                            <p class="text-sm text-slate-600">OD 6071h</p>
+                            <p class="mt-2">Registre de la consigne de vitesse (ex: 50.0 Hz).</p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-4">
+                            <span class="text-sm font-bold text-blue-600">LIRE (Esclave → Maître)</span>
+                            <h4 class="text-xl font-semibold mt-1">ETA (Status Word)</h4>
+                            <p class="text-sm text-slate-600">OD 6041h</p>
+                            <p class="mt-2">Registre d'état du variateur (Prêt, En marche, Défaut).</p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-4">
+                            <span class="text-sm font-bold text-blue-600">LIRE (Esclave → Maître)</span>
+                            <h4 class="text-xl font-semibold mt-1">RFR/RFRD (Actual Value)</h4>
+                            <p class="text-sm text-slate-600">OD 606Ch</p>
+                            <p class="mt-2">Registre de la vitesse réelle du moteur.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Profils de Pilotage -->
+                <section class="mb-8">
+                    <h3 class="text-2xl font-semibold text-blue-800 mb-4">B. Les 3 Profils de Pilotage (Paramètre CHCF)</h3>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="border border-slate-200 rounded-lg p-4">
+                            <h4 class="text-xl font-semibold">1. Non Séparés (SIM)</h4>
+                            <p class="text-sm font-medium text-slate-500 mb-2">Réglage usine</p>
+                            <p>Simple et couplé. Si la consigne vient de CANopen (`FR1=CAn`), la commande vient *aussi* de CANopen.</p>
+                        </div>
+                        <div class="border border-slate-200 rounded-lg p-4">
+                            <h4 class="text-xl font-semibold">2. Séparés (SEP)</h4>
+                            <p class="text-sm font-medium text-slate-500 mb-2">Flexible</p>
+                            <p>Découplé. Permet une commande par bornier (bouton) et une consigne de vitesse par CANopen.</p>
+                        </div>
+                        <div class="border border-slate-200 rounded-lg p-4">
+                            <h4 class="text-xl font-semibold">3. IO (IO)</h4>
+                            <p class="text-sm font-medium text-slate-500 mb-2">Simplifié</p>
+                            <p>Contourne le protocole CIA402. Le variateur est vu comme un simple module d'E/S (ex: Bit 0 = Marche).</p>
+                        </div>
+                    </div>
+                </section>
+
+                 <!-- PDOs vs Scanner -->
+                <section>
+                    <h3 class="text-2xl font-semibold text-blue-800 mb-4">C. Transport des Données : PDO vs Scanner d'IO</h3>
+                     <div class="grid md:grid-cols-2 gap-4">
+                        <div class="border border-slate-200 rounded-lg p-4">
+                            <h4 class="text-xl font-semibold">Mappage PDO Statique</h4>
+                            <p class="text-sm font-medium text-slate-500 mb-2">Méthode directe (ex: PDO 2)</p>
+                            <p>Les "enveloppes" de données (RPDO, TPDO) sont fixes. C'est rapide à configurer pour un test. Les adresses mémoires (`%IW`, `%QW`) peuvent être éparpillées.</p>
+                        </div>
+                        <div class="border border-slate-200 rounded-lg p-4">
+                            <h4 class="text-xl font-semibold">Scanner d'IO</h4>
+                            <p class="text-sm font-medium text-slate-500 mb-2">Méthode optimisée</p>
+                            <p>Le maître regroupe les objets (CMD, LFR, etc.) dans une zone mémoire contiguë. C'est plus propre et performant pour le programme automate final.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Onglet 3: Diagramme d'État (FSM) -->
+            <div id="fsm" class="tab-content">
+                <h2 class="text-3xl font-bold text-blue-900 mb-6" style="color: #003A70;">2. Simulation du Diagramme d'État (FSM CIA402)</h2>
+                <p class="text-lg text-slate-700 mb-6">
+                    Le pilotage obéit à une "Machine à États Finis". On ne force pas un état, on envoie une commande (via CMD) pour demander une transition. Cliquez sur "Étape Suivante" pour simuler la séquence de démarrage.
+                </p>
+
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <!-- Colonne 1: Contrôle et Info -->
+                    <div class="lg:col-span-1 p-4 border border-slate-200 rounded-lg">
+                        <h3 class="text-xl font-semibold text-blue-800 mb-4">Panneau de Contrôle</h3>
+                        <button id="fsm-button" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-green-700 transition-colors" onclick="transitionFSM()">
+                            Démarrer la Séquence
+                        </button>
+                        <button id="fsm-reset-button" class="w-full bg-slate-500 text-white font-semibold py-2 px-4 rounded-lg mt-2 hidden" onclick="resetFSM()">
+                            Réinitialiser
+                        </button>
+
+                        <div class="mt-6">
+                            <h4 class="text-lg font-semibold">Commande à Envoyer :</h4>
+                            <p id="fsm-cmd-display" class="font-mono text-2xl text-green-700 bg-slate-100 p-2 rounded-md">--</p>
+                        </div>
+                        <div class="mt-4">
+                            <h4 class="text-lg font-semibold">État Reçu :</h4>
+                            <p id="fsm-eta-display" class="font-mono text-2xl text-blue-700 bg-slate-100 p-2 rounded-md">16#0250</p>
+                        </div>
+                        <div class="mt-4">
+                            <h4 class="text-lg font-semibold">Affichage Variateur :</h4>
+                            <p id="fsm-afficheur-display" class="font-mono text-2xl text-slate-900 bg-slate-100 p-2 rounded-md">nSt</p>
+                        </div>
+                    </div>
+
+                    <!-- Colonne 2: Diagramme FSM -->
+                    <div class="lg:col-span-2 p-4">
+                        <h3 class="text-xl font-semibold text-blue-800 mb-4 text-center">Diagramme de Séquence</h3>
+                        <div class="flex flex-col items-center">
+                            
+                            <div id="fsm-state-0" class="fsm-state active w-3/4 p-4 text-center rounded-lg">
+                                <h4 class="text-lg font-semibold">Not Ready to Switch On</h4>
+                                <p class="font-mono">ETA = 16#0250 (nSt)</p>
+                            </div>
+
+                            <div id="fsm-arrow-0" class="fsm-arrow vertical down my-2 flex flex-col justify-center">
+                                <span class="text-xs text-center -mt-3 transform -translate-x-12 p-1 bg-white rounded">CMD=16#0006</span>
+                            </div>
+
+                            <div id="fsm-state-1" class="fsm-state w-3/4 p-4 text-center rounded-lg">
+                                <h4 class="text-lg font-semibold">Ready to Switch On</h4>
+                                <p class="font-mono">ETA = 16#0231 (Rdy)</p>
+                            </div>
+
+                            <div id="fsm-arrow-1" class="fsm-arrow vertical down my-2 flex flex-col justify-center">
+                                <span class="text-xs text-center -mt-3 transform -translate-x-12 p-1 bg-white rounded">CMD=16#0007</span>
+                            </div>
+
+                            <div id="fsm-state-2" class="fsm-state w-3/4 p-4 text-center rounded-lg">
+                                <h4 class="text-lg font-semibold">Switched On</h4>
+                                <p class="font-mono">ETA = 16#0233</p>
+                            </div>
+
+                            <div id="fsm-arrow-2" class="fsm-arrow vertical down my-2 flex flex-col justify-center">
+                                <span class="text-xs text-center -mt-3 transform -translate-x-12 p-1 bg-white rounded">CMD=16#000F</span>
+                            </div>
+                            
+                            <div id="fsm-state-3" class="fsm-state w-3/4 p-4 text-center rounded-lg">
+                                <h4 class="text-lg font-semibold">Operation Enabled</h4>
+                                <p class="font-mono">ETA = 16#0637 (RUN)</p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                 <!-- Zone du Graphique -->
+                <div class="mt-8">
+                    <h3 class="text-2xl font-semibold text-blue-800 mb-4 text-center">Visualisation de l'État Actif</h3>
+                    <div class="chart-container">
+                        <canvas id="fsmChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onglet 4: Guide Pratique -->
+            <div id="guide" class="tab-content">
+                <h2 class="text-3xl font-bold text-blue-900 mb-6" style="color: #003A70;">3. Guide Pratique (Cas 1: Mappage PDO Statique)</h2>
+                <p class="text-lg text-slate-700 mb-8">
+                    Suivez ces étapes pour la mise en service et le test de la communication.
+                </p>
+
+                <!-- Stepper -->
+                <ol class="relative border-l border-gray-300">
+                    <li class="mb-10 ml-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full -left-4 ring-8 ring-white">
+                            <span class="font-bold text-blue-800">1</span>
+                        </span>
+                        <h3 class="flex items-center mb-1 text-2xl font-semibold text-gray-900">Configuration Matérielle</h3>
+                        <p class="text-base font-normal text-gray-600">Câblage physique et paramétrage du variateur.</p>
+                        <div class="mt-4 p-4 bg-slate-50 rounded-lg border">
+                            <h4 class="font-semibold">Câblage :</h4>
+                            <ul class="list-disc list-inside text-slate-700">
+                                <li>Relier CAN-H, CAN-L, et CAN-GND (paire torsadée blindée).</li>
+                                <li>Activer les résistances de terminaison (120 Ω) en début et fin de segment.</li>
+                            </ul>
+                            <h4 class="font-semibold mt-4">Paramétrage ATV32 :</h4>
+                             <ul class="list-disc list-inside text-slate-700 font-mono">
+                                <li>CHCF = SIM (Profil Non Séparé)</li>
+                                <li>FR1 = CAn (Consigne via CANopen)</li>
+                                <li>AdCO = 1 (Adresse esclave)</li>
+                                <li>bdCO = 250k (Baud rate)</li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="mb-10 ml-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full -left-4 ring-8 ring-white">
+                            <span class="font-bold text-blue-800">2</span>
+                        </span>
+                        <h3 class="flex items-center mb-1 text-2xl font-semibold text-gray-900">Configuration Logicielle (SoMachine)</h3>
+                        <p class="text-base font-normal text-gray-600">Configuration du projet dans l'automate.</p>
+                         <div class="mt-4 p-4 bg-slate-50 rounded-lg border">
+                            <h4 class="font-semibold">Arborescence :</h4>
+                            <ul class="list-disc list-inside text-slate-700">
+                                <li>Ajouter un M241.</li>
+                                <li>Sous `CAN_1`, ajouter un maître `CANopen_Performance`.</li>
+                                <li>Régler le Baud Rate du maître à 250k (identique à l'esclave).</li>
+                                <li>Clic droit sur le maître, "Ajouter un appareil..." -> `Altivar 32`.</li>
+                                <li>Configurer l'adresse (Node-ID) de l'esclave à 1 (identique à `AdCO`).</li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="mb-10 ml-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full -left-4 ring-8 ring-white">
+                            <span class="font-bold text-blue-800">3</span>
+                        </span>
+                        <h3 class="flex items-center mb-1 text-2xl font-semibold text-gray-900">Mappage des PDO</h3>
+                        <p class="text-base font-normal text-gray-600">Choisir les données à échanger automatiquement.</p>
+                         <div class="mt-4 p-4 bg-slate-50 rounded-lg border">
+                            <h4 class="font-semibold">Notre Choix (Simple) :</h4>
+                            <ul class="list-disc list-inside text-slate-700">
+                                <li>Cocher **RPDO2 (2nd Receive PDO)** : Mappe `Controlword (CMD)` et `LFR`.</li>
+                                <li>Cocher **TPDO2 (2nd Transmit PDO)** : Mappe `Statusword (ETA)`.</li>
+                                <li>Les variables apparaissent dans "Mappage E/S CANopen".</li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="ml-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full -left-4 ring-8 ring-white">
+                            <span class="font-bold text-blue-800">4</span>
+                        </span>
+                        <h3 class="flex items-center mb-1 text-2xl font-semibold text-gray-900">Test de Mise en Service (Forçage)</h3>
+                        <p class="text-base font-normal text-gray-600">Validation sans code, en forçant les variables.</p>
+                         <div class="mt-4 p-4 bg-slate-50 rounded-lg border">
+                            <h4 class="font-semibold">Suivre la Séquence CIA402 :</h4>
+                            <ol class="list-decimal list-inside text-slate-700">
+                                <li>Se connecter "En Ligne" et ouvrir la table de "Mappage E/S CANopen".</li>
+                                <li>Vérifier `Statusword` = `16#0250` (nSt).</li>
+                                <li>Forcer `Controlword` = `16#0006` → Vérifier `Statusword` = `16#0231` (Rdy).</li>
+                                <li>Forcer `Controlword` = `16#0007` → Vérifier `Statusword` = `16#0233`.</li>
+                                <li>Forcer `Controlword` = `16#000F` → Vérifier `Statusword` = `16#0637` (RUN).</li>
+                                <li>Forcer `LFR` = `16#0064` (100d = 10.0 Hz).</li>
+                                <li><strong>Résultat : Le moteur tourne. La communication est validée.</strong></li>
+                            </ol>
+                        </div>
+                    </li>
+                </ol>
+
+            </div>
+            
+            <!-- Onglet 5: Synthèse -->
+            <div id="synthese" class="tab-content">
+                <h2 class="text-3xl font-bold text-blue-900 mb-6" style="color: #003A70;">4. Synthèse et Conclusion</h2>
+                <p class="text-lg text-slate-700 mb-8">
+                    Voici les points clés à retenir de cette étude.
+                </p>
+                <div class="space-y-6">
+                    <div class="p-6 bg-green-50 rounded-lg border border-green-200">
+                        <h3 class="text-xl font-semibold text-green-800">1. Validation sans Code</h3>
+                        <p class="text-lg text-green-700">La validation de la communication peut être faite sans programmation automate, via le forçage dans la table de mappage E/S. C'est une étape de mise en service essentielle.</p>
+                    </div>
+                    <div class="p-6 bg-blue-50 rounded-lg border border-blue-200">
+                        <h3 class="text-xl font-semibold text-blue-800">2. Respect du Protocole CIA402</h3>
+                        <p class="text-lg text-blue-700">Le pilotage est *strictement dépendant* du respect de la machine à états (FSM). On ne peut pas "forcer" l'état RUN, il faut suivre la séquence CMD vs ETA.</p>
+                    </div>
+                     <div class="p-6 bg-slate-50 rounded-lg border border-slate-200">
+                        <h3 class="text-xl font-semibold text-slate-800">3. Choix de l'Architecture</h3>
+                        <p class="text-lg text-slate-700"><strong>Mappage PDO Statique (ex: PDO 2)</strong> est la méthode la plus directe pour un test. <strong>Scanner d'IO</strong> est l'architecture recommandée pour une application finale, car elle optimise la lisibilité et la performance du programme.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const tabContents = document.querySelectorAll('.tab-content');
+        const navButtons = document.querySelectorAll('.nav-button');
+
+        function showTab(tabId, button) {
+            tabContents.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+
+            navButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            button.classList.add('active');
+        }
+
+        // ---- Logique du Diagramme d'État (FSM) ----
+
+        const fsmChartData = {
+            labels: ['Not Ready to Switch On (nSt)', 'Ready to Switch On (Rdy)', 'Switched On', 'Operation Enabled (RUN)'],
+            datasets: [{
+                label: 'État FSM',
+                data: [1, 0, 0, 0], // État initial
+                backgroundColor: [
+                    '#008A30', // Schneider Green (Active)
+                    '#e2e8f0', // slate-200 (Inactive)
+                    '#e2e8f0',
+                    '#e2e8f0'
+                ],
+                hoverBackgroundColor: [
+                    '#008A30',
+                    '#cbd5e1',
+                    '#cbd5e1',
+                    '#cbd5e1'
+                ],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        };
+
+        const fsmChartConfig = {
+            type: 'doughnut',
+            data: fsmChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                family: "'Inter', sans-serif"
+                            }
+                        }
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                }
+            }
+        };
+
+        let fsmChart;
+        let currentState = 0;
+
+        const states = [
+            { name: 'Not Ready', afficheur: 'nSt', eta: '16#0250', cmd: '16#0006', btnText: '1. Envoyer "Shutdown"' },
+            { name: 'Ready', afficheur: 'Rdy', eta: '16#0231', cmd: '16#0007', btnText: '2. Envoyer "Switch On"' },
+            { name: 'Switched On', afficheur: '---', eta: '16#0233', cmd: '16#000F', btnText: '3. Envoyer "Enable Operation"' },
+            { name: 'Operation Enabled', afficheur: 'RUN', eta: '16#0637', cmd: 'LFRD = [vitesse]', btnText: 'Moteur en Marche' }
+        ];
+
+        const stateElements = [
+            document.getElementById('fsm-state-0'),
+            document.getElementById('fsm-state-1'),
+            document.getElementById('fsm-state-2'),
+            document.getElementById('fsm-state-3')
+        ];
+
+        const arrowElements = [
+            document.getElementById('fsm-arrow-0'),
+            document.getElementById('fsm-arrow-1'),
+            document.getElementById('fsm-arrow-2')
+        ];
+
+        const cmdDisplay = document.getElementById('fsm-cmd-display');
+        const etaDisplay = document.getElementById('fsm-eta-display');
+        const afficheurDisplay = document.getElementById('fsm-afficheur-display');
+        const fsmButton = document.getElementById('fsm-button');
+        const fsmResetButton = document.getElementById('fsm-reset-button');
+
+        function updateFSMView(stateIndex) {
+            const state = states[stateIndex];
+            
+            // Mettre à jour les affichages
+            etaDisplay.textContent = state.eta;
+            afficheurDisplay.textContent = state.afficheur;
+            cmdDisplay.textContent = states[stateIndex - 1] ? states[stateIndex - 1].cmd : '--';
+            
+            if (stateIndex < states.length - 1) {
+                fsmButton.textContent = state.btnText;
+                fsmButton.disabled = false;
+            } else {
+                fsmButton.textContent = state.btnText;
+                fsmButton.disabled = true;
+            }
+
+            // Mettre à jour le diagramme HTML
+            stateElements.forEach((el, index) => {
+                el.classList.toggle('active', index === stateIndex);
+            });
+            arrowElements.forEach((el, index) => {
+                el.classList.toggle('active', index === stateIndex - 1);
+            });
+
+            // Mettre à jour le graphique Chart.js
+            const newData = [0, 0, 0, 0];
+            const newColors = ['#e2e8f0', '#e2e8f0', '#e2e8f0', '#e2e8f0'];
+            newData[stateIndex] = 1;
+            newColors[stateIndex] = '#008A30'; // Schneider Green
+
+            fsmChart.data.datasets[0].data = newData;
+            fsmChart.data.datasets[0].backgroundColor = newColors;
+            fsmChart.update();
+        }
+
+        function transitionFSM() {
+            if (currentState < states.length - 1) {
+                currentState++;
+                updateFSMView(currentState);
+            }
+            if (currentState > 0) {
+                fsmResetButton.style.display = 'block';
+            }
+        }
+
+        function resetFSM() {
+            currentState = 0;
+            updateFSMView(0);
+            cmdDisplay.textContent = '--';
+            fsmButton.textContent = states[0].btnText;
+            fsmButton.disabled = false;
+            fsmResetButton.style.display = 'none';
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('fsmChart').getContext('2d');
+            fsmChart = new Chart(ctx, fsmChartConfig);
+            
+            // S'assurer que le premier onglet est bien affiché
+            showTab('accueil', document.querySelector('.nav-button'));
+            resetFSM(); // Initialiser l'état FSM au chargement
+        });
+
+    </script>
 </body>
 </html>
