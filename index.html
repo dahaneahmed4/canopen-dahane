@@ -427,7 +427,7 @@
                 <h2 class="text-3xl font-bold text-blue-900 mb-6" style="color: #003A70;">4. Synthèse et Conclusion</h2>
                 <p class="text-lg text-slate-700 mb-8">
                     Voici les points clés à retenir de cette étude.
-                </p>
+                </D>
                 <div class="space-y-6">
                     <div class="p-6 bg-green-50 rounded-lg border border-green-200">
                         <h3 class="text-xl font-semibold text-green-800">1. Validation sans Code</h3>
@@ -445,6 +445,10 @@
             </div>
 
         </div>
+
+        <footer class="text-center mt-8 text-slate-500 text-sm">
+            <p>Créé par: DAHANE AHMED LAMINE</p>
+        </footer>
     </main>
 
     <script>
@@ -556,22 +560,25 @@
             }
 
             // Mettre à jour le diagramme HTML
+            // Vérifier si les éléments existent avant de les manipuler
             stateElements.forEach((el, index) => {
-                el.classList.toggle('active', index === stateIndex);
+                if(el) el.classList.toggle('active', index === stateIndex);
             });
             arrowElements.forEach((el, index) => {
-                el.classList.toggle('active', index === stateIndex - 1);
+                if(el) el.classList.toggle('active', index === stateIndex - 1);
             });
 
             // Mettre à jour le graphique Chart.js
-            const newData = [0, 0, 0, 0];
-            const newColors = ['#e2e8f0', '#e2e8f0', '#e2e8f0', '#e2e8f0'];
-            newData[stateIndex] = 1;
-            newColors[stateIndex] = '#008A30'; // Schneider Green
+            if (fsmChart) {
+                const newData = [0, 0, 0, 0];
+                const newColors = ['#e2e8f0', '#e2e8f0', '#e2e8f0', '#e2e8f0'];
+                newData[stateIndex] = 1;
+                newColors[stateIndex] = '#008A30'; // Schneider Green
 
-            fsmChart.data.datasets[0].data = newData;
-            fsmChart.data.datasets[0].backgroundColor = newColors;
-            fsmChart.update();
+                fsmChart.data.datasets[0].data = newData;
+                fsmChart.data.datasets[0].backgroundColor = newColors;
+                fsmChart.update();
+            }
         }
 
         function transitionFSM() {
@@ -579,7 +586,7 @@
                 currentState++;
                 updateFSMView(currentState);
             }
-            if (currentState > 0) {
+            if (currentState > 0 && fsmResetButton) {
                 fsmResetButton.style.display = 'block';
             }
         }
@@ -587,20 +594,36 @@
         function resetFSM() {
             currentState = 0;
             updateFSMView(0);
-            cmdDisplay.textContent = '--';
-            fsmButton.textContent = states[0].btnText;
-            fsmButton.disabled = false;
-            fsmResetButton.style.display = 'none';
+            if (cmdDisplay) cmdDisplay.textContent = '--';
+            if (fsmButton) {
+                fsmButton.textContent = states[0].btnText;
+                fsmButton.disabled = false;
+            }
+            if (fsmResetButton) fsmResetButton.style.display = 'none';
         }
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', () => {
-            const ctx = document.getElementById('fsmChart').getContext('2d');
-            fsmChart = new Chart(ctx, fsmChartConfig);
+            const ctxEl = document.getElementById('fsmChart');
+            if (ctxEl) {
+                const ctx = ctxEl.getContext('2d');
+                fsmChart = new Chart(ctx, fsmChartConfig);
+            } else {
+                console.error("Élément Canvas 'fsmChart' non trouvé.");
+            }
             
             // S'assurer que le premier onglet est bien affiché
             showTab('accueil', document.querySelector('.nav-button'));
             resetFSM(); // Initialiser l'état FSM au chargement
+
+            // Attacher les gestionnaires d'événements aux éléments qui existent
+            if (fsmButton) fsmButton.onclick = transitionFSM;
+            if (fsmResetButton) fsmResetButton.onclick = resetFSM;
+            
+            navButtons.forEach(button => {
+                const tabId = button.getAttribute('onclick').match(/'([^']+)'/)[1];
+                button.onclick = () => showTab(tabId, button);
+            });
         });
 
     </script>
